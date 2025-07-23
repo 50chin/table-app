@@ -1,23 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import Table from "./components/Table/ Table";
+import "./App.css";
 
 function App() {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("https://dummyjson.com/users");
+      const data = await response.json();
+      setUsers(data.users);
+      setLoading(false);
+    } catch (err) {
+      setError("Ошибка загрузки данных");
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Таблица пользователей</h1>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {loading ? <p>Загрузка...</p> : <Table users={users} />}
     </div>
   );
 }
